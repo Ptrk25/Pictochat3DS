@@ -42,7 +42,6 @@ void DrawString(u8 *screen, const char *str, u32 x, u32 y, Color color)
 }
 
 void color_pixel(int x, int y, Color color, u8* screen) {
-    //somehow we should check hre which screen we're using, and how check which pixel we're coloring
     y = HEIGHT - y;
     int hulp = x;
     x = y;

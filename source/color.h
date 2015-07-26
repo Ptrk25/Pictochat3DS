@@ -13,6 +13,9 @@ typedef struct color {
     u8 r, g, b;
 }Color;
 
+/**
+ * Set of variables which define the basic colors used in the interface
+ */
 Color background_top;
 Color background_bottom;
 Color background_stripes_outside;
@@ -42,6 +45,9 @@ Color unnamed_6;
 Color white;
 Color black;
 
+/**
+ * Initialises the basic colors so that other files can make use of them
+ */
 void init_colors();
 
 #endif
