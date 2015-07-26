@@ -6,29 +6,27 @@
 #include "keyboard.h"
 #include "messages.h"
 
-u8* top;
-u8* bottom;
-
 int cache;
 
 void init() {
     cache = 0;
-    
-    memset(top, 0, 240*400*3);
-    top = gfxGetFramebuffer(GFX_TOP, GFX_LEFT, NULL, NULL);
-    memset(bottom, 0, 240*400*3);
-    bottom = gfxGetFramebuffer(GFX_BOTTOM, GFX_LEFT, NULL, NULL);
-    
+
     init_colors();
     init_keyboard();
     init_messages();
     
-    add_message("The oldest message", 1, white);
-    add_message("This one is newer", 1, white);
-    add_message("Wow, we're chatting", 1, white);
-    add_message("The latest message", 1, white);
+    add_message("You joined the room", 1, white, black);
+    add_message("This one is newer", 1, white, background_message);
+    add_message("Wow, we're chatting", 1, white, background_message);
+    add_message("The latest message", 1, white, background_message);
 }
 
+void get_buffers() {
+    //memset(top, 0, TOPSIZE); //endabled in V38
+    top = gfxGetFramebuffer(GFX_TOP, GFX_LEFT, NULL, NULL);
+    //memset(bottom, 0, BOTTOMSIZE); //endabled in V38
+    bottom = gfxGetFramebuffer(GFX_BOTTOM, GFX_LEFT, NULL, NULL);
+}
 void draw_lines() { //9C
     int i, j;
     for(i = 0; i < WIDTH; i++) {
@@ -65,19 +63,14 @@ void draw_connection_status() {
         draw_square(1 + i * 2, 20, 1, 1, unnamed_3, top);
     }
     
-    //draw personal color line
-    //draw_square(0, HEIGHT, WIDTH, 1, 0x84, 0x62, 0xF7, top);
-    
     //draw A
     draw_square(1, HEIGHT - 18, 16, 16, unnamed_4, top);
     draw_square(2, HEIGHT - 17, 14, 14, unnamed_5, top);
-    
 }
 
 
 void draw_menu() {
     draw_square(0, 0, WIDTH, HEIGHT, background_top, top);
-    draw_square(0, 0, 320, 240, background_bottom, bottom);
     draw_lines();
     draw_sidebar();
     draw_connection_status();
@@ -94,12 +87,20 @@ bool clicked(int x, int y, int width, int height, int touch_x, int touch_y) {
     return true;
 }
 int main() {
+    bool change = true;
+    
+    srvInit();
+    aptInit();
+    hidInit(NULL);
     gfxInitDefault();
+ 
     init();
     
-    gfxSwapBuffers(); //why use 2 buffers? we'll just stick with this one
+    get_buffers();
+    //gfxSwapBuffers();
     while (aptMainLoop())
     {
+        
         gspWaitForVBlank();
         hidScanInput();
         
@@ -109,27 +110,47 @@ int main() {
         touchPosition touch;
         hidTouchRead(&touch);
         
+        if(change == true || check_keyboard_click(touch)) {
+            draw_keyboard(bottom);
+            gfxFlushBuffers();
+            change = true;
+        }
+
+        if(change) {
+            draw_menu();
+            gfxFlushBuffers();
+            gfxSwapBuffers();
+            get_buffers();
+            change = false;
+        }
+        
+        
         if(kDown & KEY_A) {  
-            add_message("You clicked A", 1, white);
+            add_message("You clicked A", 1, white, background_message);
+            change = true;
         }
         if(kDown & KEY_B) {  
-            add_message("You clicked B", 1, white);
+            add_message("You clicked B", 1, white, background_message);
+            change = true;
         }
         if(kDown & KEY_L) {  
             selection_up();
+            change = true;
         }
         if(kDown & KEY_R) {  
             selection_down();
+            change = true;
         }
-
-        draw_menu();
+        if(kDown & KEY_START) {
+            break;
+        }
         
-        check_keyboard_click(touch);
-        draw_keyboard(bottom);
-
         gfxFlushBuffers();
     }
 
     gfxExit();
+    hidExit();
+    aptExit();
+    srvExit();
     return 0;
 }

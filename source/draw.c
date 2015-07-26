@@ -42,17 +42,19 @@ void DrawString(u8 *screen, const char *str, u32 x, u32 y, Color color)
 }
 
 void color_pixel(int x, int y, Color color, u8* screen) {
-    
+    //somehow we should check hre which screen we're using, and how check which pixel we're coloring
     y = HEIGHT - y;
     int hulp = x;
     x = y;
     y = hulp;
     
     u32 v=(x + y * HEIGHT) * 3;
-  
-    screen[v] = color.r;
-    screen[v + 1] = color.g;
-    screen[v + 2] = color.b;
+    
+    if((screen == top && v < 288000 && v > 0) || (v < 230400 && v > 0)) {
+        screen[v] = color.r;
+        screen[v + 1] = color.g;
+        screen[v + 2] = color.b;
+    }
 }
 
 void draw_square(int x, int y, int width, int height, Color color, u8* screen) {

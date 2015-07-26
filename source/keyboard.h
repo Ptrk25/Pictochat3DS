@@ -10,9 +10,14 @@
 #ifndef KEYBOARD_H
 #define KEYBOARD_H
 
+typedef struct key {
+    char key;
+    int selected;
+}Key;
+
 void init_keyboard();
 void draw_keyboard(u8* screen);
-void check_keyboard_click(touchPosition touch);
+bool check_keyboard_click(touchPosition touch);
 void send();
 
 #endif

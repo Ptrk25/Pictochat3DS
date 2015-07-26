@@ -16,6 +16,11 @@
 #define FONT_SIZE	8
 #define WIDTH           400
 #define HEIGHT          240
+#define TOPSIZE         288000
+#define BOTTOMSIZE      230400
+
+u8* top;
+u8* bottom;
 
 void DrawCharacter(u8 *screen, char character, u32 x, u32 y, Color color);
 void DrawString(u8 *screen, const char *str, u32 x, u32 y, Color color);
