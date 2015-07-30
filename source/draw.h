@@ -66,4 +66,5 @@ void color_pixel(int x, int y, Color color, u8* screen);
  */
 void draw_square(int x, int y, int width, int height, Color color, u8* screen);
 
+void draw_square_radius(int x, int y, int width, int height, int radius, Color color, u8* screen);
 #endif

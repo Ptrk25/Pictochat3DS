@@ -46,5 +46,9 @@ void selection_down();
  */
 void draw_messages();
 
+void messages_reset_change();
+
+bool messages_get_change();
+
 #endif
 

@@ -11,12 +11,15 @@ int messages_start = 0;
 Message messages[100];
 int selected_message = 0;
 
+bool change = false;
+
 void init_messages() {
     int i;
     for(i = 0; i < max_messages; i++) {
         messages[i].message = "";
         messages[i].sender = 0;
     }
+    change = true;
 }
 void add_message(char* message, int sender, Color color, Color bgcolor) {
     messages[messages_count].message = message;
@@ -25,6 +28,7 @@ void add_message(char* message, int sender, Color color, Color bgcolor) {
     messages[messages_count].bgcolor = bgcolor;
     messages_count++;
     selected_message++;
+    change = true;
 }
 
 void selection_up() {
@@ -89,7 +93,7 @@ void draw_box(u8* top, int index) {
     draw_square(25, HEIGHT - (17 - j + 1)  - (index - 1) * 25, WIDTH - 30, 1, hulp, top);
     draw_square(25, HEIGHT - (16 - j + 1)  - (index - 1) * 25, WIDTH - 30, 1, white, top);
     draw_square(25, HEIGHT - (15 - j + 1)  - (index - 1) * 25, WIDTH - 30, 1, hulp, top);
-
+  
     //DRAW HERE SOME TEXT ARROUND COORDS (20, 20)
     //IF IT WORKS, TRY THIS TEXT: 
     DrawString(top, messages[messages_count - index].message, 30, HEIGHT - (20 - j)  - (index - 1) * 25 - FONT_SIZE / 2, messages[messages_count - index].color);
@@ -114,4 +118,12 @@ void draw_messages(u8* top) {
     for(i = current; i > 0; i--) { //there only fit 7 messages maximum on the screen
         draw_box(top, i);
     }
+}
+
+void messages_reset_change() {
+    change = false;
+}
+
+bool messages_get_change() {
+    return change;
 }

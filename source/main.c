@@ -5,6 +5,7 @@
 #include "draw.h"
 #include "keyboard.h"
 #include "messages.h"
+#include "connection.h"
 
 int cache;
 
@@ -14,6 +15,7 @@ void init() {
     init_colors();
     init_keyboard();
     init_messages();
+    init_connect();
     
     add_message("You joined the room", 1, white, black);
     add_message("This one is newer", 1, white, background_message);
@@ -87,8 +89,6 @@ bool clicked(int x, int y, int width, int height, int touch_x, int touch_y) {
     return true;
 }
 int main() {
-    bool change = true;
-    
     srvInit();
     aptInit();
     hidInit(NULL);
@@ -100,7 +100,6 @@ int main() {
     //gfxSwapBuffers();
     while (aptMainLoop())
     {
-        
         gspWaitForVBlank();
         hidScanInput();
         
@@ -110,36 +109,31 @@ int main() {
         touchPosition touch;
         hidTouchRead(&touch);
         
-        if(change == true || check_keyboard_click(touch)) {
+        if(messages_get_change() == true || check_keyboard_click(touch)) {
             draw_keyboard(bottom);
             gfxFlushBuffers();
-            change = true;
-        }
-
-        if(change) {
+            
             draw_menu();
             gfxFlushBuffers();
             gfxSwapBuffers();
             get_buffers();
-            change = false;
+            messages_reset_change();
         }
-        
         
         if(kDown & KEY_A) {  
             add_message("You clicked A", 1, white, background_message);
-            change = true;
         }
         if(kDown & KEY_B) {  
             add_message("You clicked B", 1, white, background_message);
-            change = true;
+        }
+        if(kDown & KEY_Y) {
+            signal_connection();
         }
         if(kDown & KEY_L) {  
             selection_up();
-            change = true;
         }
         if(kDown & KEY_R) {  
             selection_down();
-            change = true;
         }
         if(kDown & KEY_START) {
             break;
@@ -147,7 +141,9 @@ int main() {
         
         gfxFlushBuffers();
     }
-
+    
+    dinit_connect();
+    
     gfxExit();
     hidExit();
     aptExit();

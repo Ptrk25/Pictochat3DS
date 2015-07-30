@@ -5,7 +5,6 @@
 #include "draw.h"
 #include "font.h"
 
-
 void DrawCharacter(u8 *screen, char character, u32 x, u32 y, Color color)
 {
     u32 yy;
@@ -63,4 +62,8 @@ void draw_square(int x, int y, int width, int height, Color color, u8* screen) {
             color_pixel(x + i, y + j, color, screen);
         }
     }
+}
+
+void draw_square_radius(int x, int y, int width, int height, int radius, Color color, u8* screen) {
+    //need to work on this
 }
