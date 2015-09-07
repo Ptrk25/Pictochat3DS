@@ -66,5 +66,16 @@ void color_pixel(int x, int y, Color color, u8* screen);
  */
 void draw_square(int x, int y, int width, int height, Color color, u8* screen);
 
+/**
+ * Draws a rectangle in the given color with the specified border radius --Doesn't work yet
+ * 
+ * @param x X-coordinate
+ * @param y Y-coordinate
+ * @param width The widht of the rectangle
+ * @param height The height of the rectangle
+ * @param radius The radius of the rectangle
+ * @param color Textcolor in the Color format
+ * @param screen Screen where the character should be drawed to
+ */
 void draw_square_radius(int x, int y, int width, int height, int radius, Color color, u8* screen);
 #endif
