@@ -38,6 +38,14 @@ void init_colors() {
     background_leftborder.g = 0xF6;
     background_leftborder.b = 0xF6;
     
+    background_keyboard.r = 0xD8;
+    background_keyboard.g = 0xDC;
+    background_keyboard.b = 0xD8;
+    
+    border_keyboard.r = 0x7F;
+    border_keyboard.g = 0x81;
+    border_keyboard.b = 0x7F;
+    
     background_keys.r = 0x44;
     background_keys.g = 0x55;
     background_keys.b = 0x88;
