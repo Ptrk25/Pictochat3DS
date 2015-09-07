@@ -3,30 +3,29 @@
 #include <stdio.h>
 #include "color.h"
 #include "draw.h"
-#include "keyboard.h"
 #include "messages.h"
 #include "connection.h"
+#include "keyboard.h"
 
 int cache;
+bool keyboard_visible = true;
+bool force_change = false;
 
 void init() {
     cache = 0;
 
     init_colors();
-    init_keyboard();
+    keys_init();
     init_messages();
-    init_connect();
     
-    add_message("You joined the room", 1, white, black);
-    add_message("This one is newer", 1, white, background_message);
-    add_message("Wow, we're chatting", 1, white, background_message);
-    add_message("The latest message", 1, white, background_message);
+    con_init();
+    if(con_activate() != 0) {
+        add_message("Something went wrong, try again later", 1, white, background_message);
+    }
 }
 
 void get_buffers() {
-    //memset(top, 0, TOPSIZE); //endabled in V38
     top = gfxGetFramebuffer(GFX_TOP, GFX_LEFT, NULL, NULL);
-    //memset(bottom, 0, BOTTOMSIZE); //endabled in V38
     bottom = gfxGetFramebuffer(GFX_BOTTOM, GFX_LEFT, NULL, NULL);
 }
 void draw_lines() { //9C
@@ -92,12 +91,12 @@ int main() {
     srvInit();
     aptInit();
     hidInit(NULL);
+    httpcInit();
     gfxInitDefault();
- 
+    
     init();
     
     get_buffers();
-    //gfxSwapBuffers();
     while (aptMainLoop())
     {
         gspWaitForVBlank();
@@ -109,25 +108,32 @@ int main() {
         touchPosition touch;
         hidTouchRead(&touch);
         
-        if(messages_get_change() == true || check_keyboard_click(touch)) {
-            draw_keyboard(bottom);
-            gfxFlushBuffers();
+        get_message();
+        
+        bool keyboard_click = check_hover(touch) && keyboard_visible;
+        bool messages_changed = messages_get_change();
+        
+        if(keyboard_click || messages_changed || force_change) {
+            messages_reset_change();
+            force_change = false;
+            
+            if(keyboard_visible) {
+                keys_draw();
+                gfxFlushBuffers();
+            }
+            else {
+                
+            }
             
             draw_menu();
             gfxFlushBuffers();
             gfxSwapBuffers();
             get_buffers();
-            messages_reset_change();
         }
         
-        if(kDown & KEY_A) {  
-            add_message("You clicked A", 1, white, background_message);
-        }
-        if(kDown & KEY_B) {  
-            add_message("You clicked B", 1, white, background_message);
-        }
-        if(kDown & KEY_Y) {
-            signal_connection();
+        if(kDown & KEY_A) {
+            //add_message("sending...", 1, white, background_message);
+            send_keys();
         }
         if(kDown & KEY_L) {  
             selection_up();
@@ -138,13 +144,13 @@ int main() {
         if(kDown & KEY_START) {
             break;
         }
-        
         gfxFlushBuffers();
     }
     
-    dinit_connect();
+    con_dinit();
     
     gfxExit();
+    httpcExit();
     hidExit();
     aptExit();
     srvExit();
