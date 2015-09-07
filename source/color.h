@@ -27,6 +27,8 @@ Color border_message;
 Color message_stripes;
 
 Color background_leftborder;
+Color background_keyboard;
+Color border_keyboard;
 
 Color background_keys;
 Color hover_keys;
@@ -44,7 +46,6 @@ Color unnamed_6;
 
 Color white;
 Color black;
-
 /**
  * Initialises the basic colors so that other files can make use of them
  */
