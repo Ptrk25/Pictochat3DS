@@ -5,10 +5,10 @@
 #include "draw.h"
 #include "messages.h"
 
-int max_messages = 100;
+int max_messages = 500;
 int messages_count = 0;
 int messages_start = 0;
-Message messages[100];
+Message messages[500];
 int selected_message = 0;
 
 bool change = false;
@@ -16,13 +16,13 @@ bool change = false;
 void init_messages() {
     int i;
     for(i = 0; i < max_messages; i++) {
-        messages[i].message = "";
+        strcpy(messages[i].message,"");
         messages[i].sender = 0;
     }
     change = true;
 }
 void add_message(char* message, int sender, Color color, Color bgcolor) {
-    messages[messages_count].message = message;
+    strcpy(messages[messages_count].message, message);
     messages[messages_count].sender = sender;
     messages[messages_count].color = color;
     messages[messages_count].bgcolor = bgcolor;
@@ -34,11 +34,14 @@ void add_message(char* message, int sender, Color color, Color bgcolor) {
 void selection_up() {
     if(selected_message > 1) {
         selected_message--;
+        change = true;
     }
 }
 void selection_down() {
-    if(selected_message < messages_count)
+    if(selected_message < messages_count) {
         selected_message++;
+        change = true;
+    }
 }
 
 void draw_box(u8* top, int index) {
@@ -50,9 +53,9 @@ void draw_box(u8* top, int index) {
         hulp = background_message;
     }
 
-    draw_square(25, HEIGHT - 25 - (index - 1) * 25, WIDTH - 30, 1, hulp, top);
-    draw_square(25, HEIGHT - 24  - (index - 1) * 25, WIDTH - 30, 1, white, top);
-    draw_square(25, HEIGHT - 23  - (index - 1) * 25, WIDTH - 30, 1, hulp, top);
+    draw_square(25, HEIGHT - 25 - (index - 1) * 25, WIDTH - 25, 1, hulp, top);
+    draw_square(25, HEIGHT - 24  - (index - 1) * 25, WIDTH - 25, 1, white, top);
+    draw_square(25, HEIGHT - 23  - (index - 1) * 25, WIDTH - 25, 1, hulp, top);
 
     draw_square(24, HEIGHT - 24 - (index - 1) * 25, 1, 1, hulp, top);
     draw_square(25, HEIGHT - 24  - (index - 1) * 25, 1, 1, white, top);
@@ -62,27 +65,27 @@ void draw_box(u8* top, int index) {
 
     draw_square(22, HEIGHT - 22 - (index - 1) * 25, 1, 1, hulp, top);
     draw_square(23, HEIGHT - 22 - (index - 1) * 25, 1, 1, white, top);
-    draw_square(24, HEIGHT - 22 - (index - 1) * 25, WIDTH - 30, 1, hulp, top);
+    draw_square(24, HEIGHT - 22 - (index - 1) * 25, WIDTH - 24, 1, hulp, top);
 
     draw_square(21, HEIGHT - 21 - (index - 1) * 25, 1, 1, hulp, top);
     draw_square(22, HEIGHT - 21 - (index - 1) * 25, 1, 1, white, top);
-    draw_square(23, HEIGHT - 21 - (index - 1) * 25, WIDTH - 30, 1, hulp, top);
+    draw_square(23, HEIGHT - 21 - (index - 1) * 25, WIDTH - 23, 1, hulp, top);
 
     int j;
     for(j = 0; j < 12; j++) {
         draw_square(21, HEIGHT - (20 - j) - (index - 1) * 25, 1, 1, hulp, top);
         draw_square(22, HEIGHT - (20 - j)  - (index - 1) * 25, 1, 1, white, top);
 
-        draw_square(23, HEIGHT - (20 - j)  - (index - 1) * 25, WIDTH - 30, 1, hulp, top);
+        draw_square(23, HEIGHT - (20 - j)  - (index - 1) * 25, WIDTH - 23, 1, hulp, top);
     }
 
     draw_square(21, HEIGHT - (19 - j + 1) - (index - 1) * 25, 1, 1, hulp, top);
     draw_square(22, HEIGHT - (19 - j + 1) - (index - 1) * 25, 1, 1, hulp, top);
-    draw_square(23, HEIGHT - (19 - j + 1) - (index - 1) * 25, WIDTH - 30, 1, hulp, top);
+    draw_square(23, HEIGHT - (19 - j + 1) - (index - 1) * 25, WIDTH - 23, 1, hulp, top);
 
     draw_square(22, HEIGHT - (18 - j + 1) - (index - 1) * 25, 1, 1, hulp, top);
     draw_square(23, HEIGHT - (18 - j + 1) - (index - 1) * 25, 1, 1, white, top);
-    draw_square(24, HEIGHT - (18 - j + 1)  - (index - 1) * 25, WIDTH - 30, 1, hulp, top);
+    draw_square(24, HEIGHT - (18 - j + 1)  - (index - 1) * 25, WIDTH - 24, 1, hulp, top);
 
     draw_square(23, HEIGHT - (17 - j + 1) - (index - 1) * 25, 1, 1, hulp, top);
     draw_square(24, HEIGHT - (17 - j + 1) - (index - 1) * 25, 1, 1, white, top);
@@ -90,9 +93,9 @@ void draw_box(u8* top, int index) {
     draw_square(24, HEIGHT - (16 - j + 1)  - (index - 1) * 25, 1, 1, hulp, top);
     draw_square(25, HEIGHT - (16 - j + 1)  - (index - 1) * 25, 1, 1, white, top);
 
-    draw_square(25, HEIGHT - (17 - j + 1)  - (index - 1) * 25, WIDTH - 30, 1, hulp, top);
-    draw_square(25, HEIGHT - (16 - j + 1)  - (index - 1) * 25, WIDTH - 30, 1, white, top);
-    draw_square(25, HEIGHT - (15 - j + 1)  - (index - 1) * 25, WIDTH - 30, 1, hulp, top);
+    draw_square(25, HEIGHT - (17 - j + 1)  - (index - 1) * 25, WIDTH - 25, 1, hulp, top);
+    draw_square(25, HEIGHT - (16 - j + 1)  - (index - 1) * 25, WIDTH - 25, 1, white, top);
+    draw_square(25, HEIGHT - (15 - j + 1)  - (index - 1) * 25, WIDTH - 25, 1, hulp, top);
   
     //DRAW HERE SOME TEXT ARROUND COORDS (20, 20)
     //IF IT WORKS, TRY THIS TEXT: 
@@ -112,10 +115,15 @@ void draw_messages(u8* top) {
     
     current = messages_count;
     if(current > 9) { //temp fix for to many messages
-        messages_start = current - 9;
-        current = 9;
+        //if(selected_message < messages_count - 9) {
+            //current = messages_count - selected_message;
+        //}
+        //else {
+            messages_start = current - 9;
+            current = 9;
+        //}
     }
-    for(i = current; i > 0; i--) { //there only fit 7 messages maximum on the screen
+    for(i = current; i > 0 && i > current - 9; i--) { //there only fit 9 messages maximum on the screen
         draw_box(top, i);
     }
 }

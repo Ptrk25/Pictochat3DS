@@ -10,7 +10,7 @@
 #define	MESSAGES_H
 
 typedef struct message {
-    char* message;
+    char message[41];
     int sender;
     Color color;
     Color bgcolor;
