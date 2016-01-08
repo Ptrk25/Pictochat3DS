@@ -10,7 +10,7 @@
 #define	MESSAGES_H
 
 typedef struct message {
-    char message[41];
+    char message[135];
     int sender;
     Color color;
     Color bgcolor;
@@ -44,7 +44,9 @@ void selection_down();
 /**
  * Draws each message to the top screen
  */
-void draw_messages();
+void draw_messages(u8* top);
+int draw_messages2(u8* top);
+int draw_messages3(u8* top);
 
 void messages_reset_change();
 

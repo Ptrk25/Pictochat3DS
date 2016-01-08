@@ -54,6 +54,10 @@ typedef struct {
 //rij 4: 12
 //rij 5: 3
 // = 50
+
+
+
+
 int keys_init(void);
 int keys_draw(void);
 bool check_hover(touchPosition touch);

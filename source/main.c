@@ -6,8 +6,14 @@
 #include "messages.h"
 #include "connection.h"
 #include "keyboard.h"
+#include "userlist.h"
+#include "audio.h"
+#include "menu.h"
+#include "main.h"
+#include "net_debugger.h"
 
 int cache;
+bool hb_quit = false;
 bool keyboard_visible = true;
 bool force_change = false;
 
@@ -17,6 +23,8 @@ void init() {
     init_colors();
     keys_init();
     init_messages();
+    menu_init();
+    userlist_read();
     
     con_init();
     if(con_activate() != 0) {
@@ -75,7 +83,7 @@ void draw_menu() {
     draw_lines();
     draw_sidebar();
     draw_connection_status();
-    draw_messages(top);
+    draw_messages3(top);
 }
 
 bool clicked(int x, int y, int width, int height, int touch_x, int touch_y) {
@@ -92,12 +100,16 @@ int main() {
     aptInit();
     hidInit(NULL);
     httpcInit();
+    csndInit();
     gfxInitDefault();
+    //ndInit();
     
     init();
     
+    audio_load("sdmc:/3ds/pictochat3ds/data/sound/background1.raw");
+    
     get_buffers();
-    while (aptMainLoop())
+    while (true && !hb_quit)
     {
         gspWaitForVBlank();
         hidScanInput();
@@ -105,51 +117,60 @@ int main() {
         u32 kDown;
         kDown = hidKeysDown();
         
+        u32 kHeld;
+        kHeld = hidKeysHeld();
+        
         touchPosition touch;
         hidTouchRead(&touch);
         
         get_message();
         
-        bool keyboard_click = check_hover(touch) && keyboard_visible;
+        bool keyboard_click = (keyboard_visible && check_hover(touch)) || (!keyboard_visible && menu_check_buttons(touch));
         bool messages_changed = messages_get_change();
         
         if(keyboard_click || messages_changed || force_change) {
             messages_reset_change();
             force_change = false;
             
+            draw_menu();
             if(keyboard_visible) {
                 keys_draw();
-                gfxFlushBuffers();
             }
             else {
-                
+                menu_draw(bottom);
             }
+            gfxFlushBuffers();
             
-            draw_menu();
             gfxFlushBuffers();
             gfxSwapBuffers();
             get_buffers();
         }
         
         if(kDown & KEY_A) {
-            //add_message("sending...", 1, white, background_message);
             send_keys();
         }
-        if(kDown & KEY_L) {  
-            selection_up();
+        if(kHeld & KEY_L) {  
+            //selection_up();
+            
         }
-        if(kDown & KEY_R) {  
-            selection_down();
+        if(kHeld & KEY_R) {  
+            //selection_down();
         }
         if(kDown & KEY_START) {
-            break;
+            keyboard_visible = !keyboard_visible;
+            force_change = true;
+        }
+        if(kDown & KEY_SELECT) {
+            
         }
         gfxFlushBuffers();
     }
     
     con_dinit();
     
+    //ndExit();
     gfxExit();
+    csndExit();
     httpcExit();
     hidExit();
     aptExit();

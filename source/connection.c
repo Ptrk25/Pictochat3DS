@@ -16,17 +16,13 @@
 #include "connection.h"
 #include "color.h"
 #include "messages.h"
-
-
+#include "menu.h"
+#include "main.h"
 
 static void *SOC_buffer = NULL;
 static int chatls = -1;
 
 #define STACKSIZE (4 * 1024)
-
-void get_mac() {
-    
-}
 
 int con_init(void) {
     SOC_buffer = memalign(0x1000, 0x100000);
@@ -70,6 +66,26 @@ void sock_send(char* message, size_t size) {
     }
 }
 
+void send_handshake() {
+    char *mac = (char*)0x1FF81060;
+    char hulp[80], hulp2[40];
+    char h[4] = "";
+    
+    strcpy(hulp, "/handshake ");
+    strcpy(hulp2, "");
+    
+    int i;
+    for(i = 0; i < 6; i++) {
+        sprintf(h, "%i ", (int)mac[i]);
+        strcat(hulp2, h);
+    }
+    sprintf(hulp, "/handshake %s", hulp2);
+    
+    //sock_send("/handshake ", strlen("/handshake "));
+    //sock_send(hulp2, strlen(hulp2));
+    sock_send(hulp, strlen(hulp));
+}
+
 static int set_socket_nonblocking(int sock) {
     int flags = fcntl(sock, F_GETFL);
 
@@ -93,12 +109,34 @@ static int sock_receive(char* message, size_t size) {
     }
     return len;
 }
+
 void get_message() {
     char message[500] = "";
     int n = sock_receive(message, 500);
     if(n > 0) {
-        //printf("%i%s\n", n, message);
-        add_message(message, 1, white, background_message);
+        if(n > 2 && message[0] == '!' && message[1] == '{') {
+            int i;
+            char cache[10];
+            userlist_reset();
+            memset(cache, 0, sizeof(cache));
+            for(i = 2; i < strlen(message); i++) {
+                if(message[i] != ',') {
+                    cache[strlen(cache)] = message[i];
+                }
+                else {
+                    //add_message(cache, 1, white, background_message);
+                    userlist_add(cache);
+                    memset(cache, 0, sizeof(cache));
+                    i++; //skip the space
+                }
+            }
+            userlist_add(cache);
+            force_change = true;
+            //add_message(cache, 1, white, background_message);
+        }
+        else {
+            add_message(message, 1, white, background_message);
+        }
     }
     else {
         //connection lost
@@ -139,6 +177,8 @@ int con_activate(void) {
     //signal_receive();
     //get_message();
     //printf("Threads booted\n");
+    //get_mac();
+    send_handshake();
     
     return 0;
 }

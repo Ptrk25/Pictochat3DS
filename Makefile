@@ -2,8 +2,8 @@
 .SUFFIXES:
 #---------------------------------------------------------------------------------
 
-export DEVKITPRO=/opt/devkitpro
-export DEVKITARM=/opt/devkitpro/devkitARM
+export DEVKITPRO=/users/bert/devkitpro
+export DEVKITARM=/users/bert/devkitpro/devkitARM
 
 ifeq ($(strip $(DEVKITARM)),)
 $(error "Please set DEVKITARM in your environment. export DEVKITARM=<path to>devkitARM")
@@ -35,10 +35,15 @@ SOURCES		:=	source
 DATA		:=	data
 INCLUDES	:=	include
 
+
+APP_TITLE       := Pictochat3DS
+APP_DESCRIPTION := Not just a chat client!
+APP_AUTHOR      := Tjessx & Red3agle
+ICON		:= icon.png
 #---------------------------------------------------------------------------------
 # options for code generation
 #---------------------------------------------------------------------------------
-ARCH	:=	-march=armv6k -mtune=mpcore -mfloat-abi=softfp
+ARCH	:=	-march=armv6k -mtune=mpcore -mfloat-abi=hard
 
 CFLAGS	:=	-g -Wall -O2 -mword-relocations \
 			-fomit-frame-pointer -ffast-math \

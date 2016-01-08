@@ -22,6 +22,13 @@
 u8* top;
 u8* bottom;
 
+
+typedef struct Image {
+    int width;
+    int height;
+    int type; //1 for rgba
+    u8 image[48 * 48 * 3 + 1];
+}Image;
 /**
  * Draws a char to the specified coordinates
  * 
@@ -78,4 +85,7 @@ void draw_square(int x, int y, int width, int height, Color color, u8* screen);
  * @param screen Screen where the character should be drawed to
  */
 void draw_square_radius(int x, int y, int width, int height, int radius, Color color, u8* screen);
+
+void draw_image(u8 *screen, Image *image, int x, int y, int rotation);
+void draw_image_center(u8 *screen, Image *image, int x, int y, int width, int height, int rotation);
 #endif

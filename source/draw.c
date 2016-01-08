@@ -5,6 +5,9 @@
 #include "draw.h"
 #include "font.h"
 
+#include <math.h>
+#define PI 3.14159265
+
 void DrawCharacter(u8 *screen, char character, u32 x, u32 y, Color color)
 {
     u32 yy;
@@ -64,6 +67,38 @@ void draw_square(int x, int y, int width, int height, Color color, u8* screen) {
     }
 }
 
+void color_pixel_rgb(int x, int y, u8 r, u8 g, u8 b, u8* screen) {
+    Color hulp;
+    hulp.r = r;
+    hulp.g = g;
+    hulp.b = b;
+    
+    color_pixel(x, y, hulp, screen);
+}
+
 void draw_square_radius(int x, int y, int width, int height, int radius, Color color, u8* screen) {
     //need to work on this
+}
+
+void draw_image(u8 *screen, Image *image, int x, int y, int rotation) {
+    int i, j, v, rx, ry;
+    for(i = 0; i < image->width; i++) {
+        for(j = 0; j < image->height; j++) {
+            v = (image->width * j + i) * 3;
+            if((u8)image->image[v] != 0xff && (u8)image->image[v + 1] != 0xff && (u8)image->image[v + 2] != 0xff) {
+                if(rotation != 0) {
+                    rx = (int)round((i - image->width / 2) * cos(rotation * PI/180) - (j - image->height / 2) * sin(rotation * PI/180));
+                    ry = (int)round((i - image->width / 2) * sin(rotation * PI/180) + (j - image->height / 2) * cos(rotation * PI/180));
+                    color_pixel_rgb(x + rx + image->width / 2, y + ry + image->height / 2, (u8)image->image[v], (u8)image->image[v + 1], (u8)image->image[v + 2], screen);
+                }
+                else {
+                    color_pixel_rgb(x + i, y + j, (u8)image->image[v], (u8)image->image[v + 1], (u8)image->image[v + 2], screen);
+                }
+            }
+        }
+    }
+}
+
+void draw_image_center(u8 *screen, Image *image, int x, int y, int width, int height, int rotation) {
+    draw_image(screen, image, x + width / 2 - image->width / 2, y + height / 2 - image->height / 2, rotation);
 }
